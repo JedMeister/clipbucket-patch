@@ -16,9 +16,12 @@ echo "$HOSTNAME" > /etc/hostname
 sed -i "s|127.0.1.1 \(.*\)|127.0.1.1 $HOSTNAME|" /etc/hosts
 hostname clipbucket
 
-# Add multiverse repository
-sed -i "s|# deb http://archive.ubuntu.com/ubuntu lucid-updates multiverse|deb http://archive.ubuntu.com/ubuntu lucid-updates multiverse|" /etc/apt/sources.list.d/sources.list
-sed -i "s|# deb http://archive.ubuntu.com/ubuntu lucid multiverse|deb http://archive.ubuntu.com/ubuntu lucid multiverse|" /etc/apt/sources.list.d/sources.list
+# Add multiverse repository - this could be improved
+# Adrian's sed line no longer works because TKL auto sets repo to localised mirror
+#sed -i "s|# deb http://archive.ubuntu.com/ubuntu lucid-updates multiverse|deb http://archive.ubuntu.com/ubuntu lucid-updates multiverse|" /etc/apt/sources.list.d/sources.list
+#sed -i "s|# deb http://archive.ubuntu.com/ubuntu lucid multiverse|deb http://archive.ubuntu.com/ubuntu lucid multiverse|" /etc/apt/sources.list.d/sources.list
+echo "deb http://archive.ubuntu.com/ubuntu lucid-updates multiverse" >> /etc/apt/sources.list.d/sources.list
+echo "deb http://archive.ubuntu.com/ubuntu lucid multiverse" >> /etc/apt/sources.list.d/sources.list
 
 #Update package information
 apt-get update
@@ -28,19 +31,19 @@ install apache2 php5 mysql-server php5-mysql flvtool2 gpac php5-cli php5-gd ssl-
 
 # Download and compile ffmpeg
 cd /usr/local/src
-wget http://ffmpeg.org/releases/ffmpeg-0.6.tar.gz
-tar xzf ffmpeg-0.6.tar.gz
-cd ffmpeg-0.6
+wget http://ffmpeg.org/releases/ffmpeg-0.8.5.tar.gz
+tar xzf ffmpeg-0.8.5.tar.gz
+cd ffmpeg-0.8.5
 ./configure --enable-libx264 --enable-libxvid --enable-libfaac --enable-libvorbis --enable-libmp3lame --enable-libtheora --enable-postproc --enable-pthreads --enable-gpl --enable-nonfree
 make
-checkinstall --pkgname=ffmpeg --pkgversion "0.6+src20100615" --backup=no --default
+checkinstall --pkgname=ffmpeg --pkgversion "0.8.5+src20111002" --backup=no --default
 
 # Download clipbucket
 cd /usr/local/src
-wget -O clipbucket_2.0.91.zip http://sourceforge.net/projects/clipbucket/files/ClipBucket%20v2/clipbucket_2.0.91.zip/download
+wget -O clipbucket_2.5.1.zip http://sourceforge.net/projects/clipbucket/files/ClipBucket%20v2/clipbucket_2.5.1.zip/download
 
 # Unzip and move
-unzip -q clipbucket_2.0.91.zip 
+unzip -q clipbucket_2.5.1.zip 
 mv upload/ /var/www/clipbucket
 
 # Create database and database user
