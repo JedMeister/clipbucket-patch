@@ -1,0 +1,15 @@
+You may access this $hostname appliance over the
+network using the following methods:
+
+Web shell:  https://$ipaddr:12320
+Webmin:     https://$ipaddr:12321
+SSH/SFTP:   root@$ipaddr (port 22)
+
+ClipBucket    http://$ipaddr
+CB Admin Area http://$ipaddr/admin_area
+
+
+
+
+For more information visit the TurnKey Linux Website
+             http://www.turnkeylinux.org

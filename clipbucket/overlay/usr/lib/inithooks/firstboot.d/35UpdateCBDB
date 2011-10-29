@@ -1,0 +1,5 @@
+#!/bin/bash
+# Script to update baseurl in clipbucket
+# By Adrian Moya <adrianmoya@gmail.com> 2010
+IP=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
+mysql -u root clipbucket -e "update cb_config set value='http://$IP' where name='baseurl';"

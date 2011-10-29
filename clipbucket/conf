@@ -1,0 +1,83 @@
+#!/bin/bash -ex
+# By Adrian Moya <adrianmoya@gmail.com> 
+
+install()
+{
+    DEBIAN_FRONTEND=noninteractive apt-get -y \
+        -o DPkg::Options::=--force-confdef \
+        -o DPkg::Options::=--force-confold \
+        install $@
+}
+
+# Set Hostname
+HOSTNAME=clipbucket
+echo "$HOSTNAME" > /etc/hostname
+sed -i "s|127.0.1.1 \(.*\)|127.0.1.1 $HOSTNAME|" /etc/hosts
+hostname clipbucket
+
+# Add multiverse repository
+sed -i "s|# deb http://archive.ubuntu.com/ubuntu lucid-updates multiverse|deb http://archive.ubuntu.com/ubuntu lucid-updates multiverse|" /etc/apt/sources.list.d/sources.list
+sed -i "s|# deb http://archive.ubuntu.com/ubuntu lucid multiverse|deb http://archive.ubuntu.com/ubuntu lucid multiverse|" /etc/apt/sources.list.d/sources.list
+
+#Update package information
+apt-get update
+
+# Install required packages
+install apache2 php5 mysql-server php5-mysql flvtool2 gpac php5-cli php5-gd ssl-cert libx264-dev libtheora-dev libfaac-dev libmp3lame-dev libvorbis-dev libxvidcore-dev build-essential yasm checkinstall
+
+# Download and compile ffmpeg
+cd /usr/local/src
+wget http://ffmpeg.org/releases/ffmpeg-0.6.tar.gz
+tar xzf ffmpeg-0.6.tar.gz
+cd ffmpeg-0.6
+./configure --enable-libx264 --enable-libxvid --enable-libfaac --enable-libvorbis --enable-libmp3lame --enable-libtheora --enable-postproc --enable-pthreads --enable-gpl --enable-nonfree
+make
+checkinstall --pkgname=ffmpeg --pkgversion "0.6+src20100615" --backup=no --default
+
+# Download clipbucket
+cd /usr/local/src
+wget -O clipbucket_2.0.91.zip http://sourceforge.net/projects/clipbucket/files/ClipBucket%20v2/clipbucket_2.0.91.zip/download
+
+# Unzip and move
+unzip -q clipbucket_2.0.91.zip 
+mv upload/ /var/www/clipbucket
+
+# Create database and database user
+mysqladmin -u root create clipbucket
+mysql -u root <<-END_PRIVS
+GRANT ALL PRIVILEGES ON clipbucket.* TO clipbucket@localhost IDENTIFIED BY "clipbucket";
+flush privileges;
+END_PRIVS
+
+# Enable apache modules
+a2enmod rewrite ssl
+
+# Enable site
+a2dissite default
+a2ensite clipbucket
+a2ensite clipbucket-ssl
+
+# Simulate install
+cd /var/www/clipbucket
+chmod 777 files files/conversion_queue files/logs files/original files/temp files/thumbs files/videos files/mass_uploads files/temp/install.me images images/avatars images/backgrounds images/category_thumbs images/groups_thumbs cache install 
+chmod 755 includes
+cp install/dbconnect.php includes/dbconnect.php
+sed -i "s/_DB_HOST_/localhost/" includes/dbconnect.php
+sed -i "s/_DB_NAME_/clipbucket/" includes/dbconnect.php
+sed -i "s/_DB_USER_/clipbucket/" includes/dbconnect.php
+sed -i "s/_DB_PASS_/clipbucket/" includes/dbconnect.php
+sed -i "s/_TABLE_PREFIX_/cb_/" includes/dbconnect.php
+sed "s/{tbl_prefix}/cb_/" install/cb_v2.sql > install/cb_v2_turnkey.sql
+sed -i "s/(154, 'use_subs', '0');//" install/cb_v2_turnkey.sql
+mysql -u root clipbucket < install/cb_v2_turnkey.sql
+mysql -u root clipbucket < /tmp/cbturnkey.sql
+cp install/install.lock files/install.lock
+cp install/clipbucket.php includes/clipbucket.php
+rm files/temp/install.me
+
+# Stop services
+service apache2 stop
+service mysql stop
+
+# Clean
+apt-get clean

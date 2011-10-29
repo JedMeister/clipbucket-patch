@@ -1,0 +1,15 @@
+<VirtualHost *:80>
+	DocumentRoot /var/www/clipbucket
+	<Directory /var/www/clipbucket>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride All
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	ErrorLog /var/log/apache2/clipbucket_error.log
+	LogLevel debug
+
+	CustomLog /var/log/apache2/clipbucket_access.log combined
+
+</VirtualHost>
