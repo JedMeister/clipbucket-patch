@@ -1,5 +1,6 @@
 #!/bin/bash -ex
 # By Adrian Moya <adrianmoya@gmail.com> 
+# Updated by Jeremy Davis aka JedMeister <jedmeister@turnkeylinux.org>
 
 install()
 {
