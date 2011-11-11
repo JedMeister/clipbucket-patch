@@ -27,7 +27,14 @@ echo "deb http://archive.ubuntu.com/ubuntu lucid multiverse" >> /etc/apt/sources
 apt-get update
 
 # Install required packages
-install apache2 php5 mysql-server php5-mysql flvtool2 gpac php5-cli php5-gd ssl-cert libx264-dev libtheora-dev libfaac-dev libmp3lame-dev libvorbis-dev libxvidcore-dev build-essential yasm checkinstall
+install apache2 php5 mysql-server php5-mysql flvtool2 gpac php5-cli php5-gd ssl-cert libtheora-dev libfaac-dev libmp3lame-dev libvorbis-dev libxvidcore-dev build-essential yasm checkinstall
+
+apt-get remove --purge libx264-85 libx264-dev
+wget http://archive.ubuntu.com/ubuntu/pool/universe/x/x264/libx264-116_0.116.2042+git178455c-1ubuntu1_i386.deb
+wget http://archive.ubuntu.com/ubuntu/pool/universe/x/x264/libx264-dev_0.116.2042+git178455c-1ubuntu1_i386.deb
+dpkg -i libx264-116_0.116.2042+git178455c-1ubuntu1_i386.deb
+dpkg -i libx264-dev_0.116.2042+git178455c-1ubuntu1_i386.deb
+
 
 # Download and compile ffmpeg
 cd /usr/local/src
