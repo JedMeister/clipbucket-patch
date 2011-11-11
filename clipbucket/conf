@@ -47,10 +47,10 @@ checkinstall --pkgname=ffmpeg --pkgversion "0.8.5+src20111002" --backup=no --def
 
 # Download clipbucket
 cd /usr/local/src
-wget -O clipbucket_2.5.1.zip http://sourceforge.net/projects/clipbucket/files/ClipBucket%20v2/clipbucket_2.5.1.zip/download
+wget -O clipbucket_2.6-r738.zip http://sourceforge.net/projects/clipbucket/files/ClipBucket%20v2/clipbucket-2.6-r738.zip/download
 
 # Unzip and move
-unzip -q clipbucket_2.5.1.zip 
+unzip -q clipbucket_2.6-r738.zip
 mv upload/ /var/www/clipbucket
 
 # Create database and database user
